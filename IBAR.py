@@ -2,8 +2,15 @@ import os
 import sys
 import shutil
 from PIL import Image
-from termcolor import colored
 
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS    
+    except Exception:
+        base_path = os.path.abspath(".")
+    
+    return os.path.join(base_path, relative_path)
 
 
 class Landscape:
@@ -33,8 +40,8 @@ class Portrait:
         self.processed_path = processed_path
         self.Border_Complete_Path = Border_Complete_Path
 
-Dim_Landscape = Landscape(36, 24, 240, r'Photos_Here\Seperated\Landscape',r'AYFO_BORDER\AYFP-WATERMARK-LANDSCAPE.png', r'Photos_Here\Seperated\Landscape\processed', r'Photos_Here\Seperated\Landscape\Border_Done')
-Dim_Portrait = Portrait(24, 36, 240, r'Photos_Here\Seperated\Portrait',r'AYFO_BORDER\AYFP-WATERMARK-PORTRAIT.png', r'Photos_Here\Seperated\Portrait\processed', r'Photos_Here\Seperated\Portrait\Border_Done')
+Dim_Landscape = Landscape(36, 24, 240, r'Photos_Here/Seperated/Landscape',resource_path('AYFO_BORDERS/AYFP-WATERMARK-LANDSCAPE.png'), r'Photos_Here/Seperated/Landscape/processed', r'Photos_Here/Seperated/Landscape/Border_Done')
+Dim_Portrait = Portrait(24, 36, 240, r'Photos_Here/Seperated/Portrait',resource_path('AYFO_BORDERS/AYFP-WATERMARK-PORTRAIT.png'), r'Photos_Here/Seperated/Portrait/processed', r'Photos_Here/Seperated/Portrait/Border_Done')
 
 
 def resize_images_in_folder(folder_path, width, height, resolution):
@@ -234,16 +241,16 @@ def delete_all_folders(folder_path):
             print(f"Error deleting folder: {str(e)}")
     else:
         pass
-
+    
 def Run_IBAR():
-
+    
     try:            
         # Variables
         source_photo_folder = os.path.join(os.getcwd(), "Photos_Here")
 
         # Main code of your program goes here
-        print(colored("AYFO - Image Border Applier and Resizer", "cyan"))
-        print(colored("[IBAR] - Process Starting", "cyan"))
+        print("AYFO - Image Border Applier and Resizer")
+        print("[IBAR] - Process Starting")
 
         # Check if any parameter is None or empty for Landscape object
         missing_parameters_landscape = [name for name, value in vars(Dim_Landscape).items() if value is None or value == ""]
@@ -262,63 +269,56 @@ def Run_IBAR():
             sys.exit()
 
         # Image Separation
-        print(colored("[IBAR] - Image Separation beginning", "yellow"))
+        print("[IBAR] - Image Separation beginning")
         try:
             Image_Seperation(source_photo_folder)
         except Exception as e:
-            print(colored("[IBAR] - Error occurred during Image Separation:", "red"), colored(str(e), "red"))
+            print("[IBAR] - Error occurred during Image Separation:", str(e))
 
         try:
-            print(colored("[IBAR - RESIZING] - Resizing Images in process.", "yellow"))
+            print("[IBAR - RESIZING] - Resizing Images in process.")
             if os.path.exists(Dim_Landscape.folder_path):
                 # Process Landscape
                 try:
                     resize_images_in_folder(Dim_Landscape.folder_path, Dim_Landscape.width, Dim_Landscape.height,
                                             Dim_Landscape.resolution)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during resizing images in the Landscape folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during resizing images in the Landscape folder:", str(e))
 
                 try:
                     delete_images_in_folder(Dim_Landscape.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during deletion of images in the Landscape folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during deletion of images in the Landscape folder:", str(e))
 
                 try:
                     copy_processed_images(Dim_Landscape.processed_path, Dim_Landscape.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during copying processed images to the Landscape folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during copying processed images to the Landscape folder:", str(e))
 
                 try:
                     Add_Border_To_Images(Dim_Landscape.folder_path, Dim_Landscape.AYFO_BORDER)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during adding border to images in the Landscape folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during adding border to images in the Landscape folder:", str(e))
 
                 try:
                     delete_images_in_folder(Dim_Landscape.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during deletion of images in the Landscape folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during deletion of images in the Landscape folder:", str(e))
 
                 try:
                     copy_processed_images(Dim_Landscape.Border_Complete_Path, Dim_Landscape.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during copying processed border images to the Landscape folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during copying processed border images to the Landscape folder:", str(e))
 
                 try:
                     delete_all_folders(Dim_Landscape.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during deletion of folders in the Landscape folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during deletion of folders in the Landscape folder:", str(e))
             else:
-                print(colored(f"[IBAR] - NO LANDSCAPE FOLDER EXISTS!: {Dim_Landscape.folder_path}", "red"))
+                print(f"[IBAR] - NO LANDSCAPE FOLDER EXISTS!: {Dim_Landscape.folder_path}")
                 os.makedirs(Dim_Landscape.folder_path)
-                print(colored(f"[IBAR] - Created the folder: {Dim_Landscape.folder_path}", "green"))
-                print(colored("[IBAR] - Add the files to the folder.", "green"))
+                print(f"[IBAR] - Created the folder: {Dim_Landscape.folder_path}")
+                print("[IBAR] - Add the files to the folder.")
 
             if os.path.exists(Dim_Portrait.folder_path):
                 # Process Portrait
@@ -326,64 +326,54 @@ def Run_IBAR():
                     resize_images_in_folder(Dim_Portrait.folder_path, Dim_Portrait.width, Dim_Portrait.height,
                                             Dim_Portrait.resolution)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during resizing images in the Portrait folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during resizing images in the Portrait folder:", str(e))
 
                 try:
                     delete_images_in_folder(Dim_Portrait.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during deletion of images in the Portrait folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during deletion of images in the Portrait folder:", str(e))
 
                 try:
                     copy_processed_images(Dim_Portrait.processed_path, Dim_Portrait.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during copying processed images to the Portrait folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during copying processed images to the Portrait folder:", str(e))
 
                 try:
                     Add_Border_To_Images(Dim_Portrait.folder_path, Dim_Portrait.AYFO_BORDER)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during adding border to images in the Portrait folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during adding border to images in the Portrait folder:", str(e))
 
                 try:
                     delete_images_in_folder(Dim_Portrait.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during deletion of images in the Portrait folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during deletion of images in the Portrait folder:", str(e))
 
                 try:
                     copy_processed_images(Dim_Portrait.Border_Complete_Path, Dim_Portrait.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during copying processed border images to the Portrait folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during copying processed border images to the Portrait folder:", str(e))
 
 
                 try:
                     delete_all_folders(Dim_Portrait.folder_path)
                 except Exception as e:
-                    print(colored("[IBAR] - Error occurred during deletion of folders in the Portrait folder:", "red"),
-                          colored(str(e), "red"))
+                    print("[IBAR] - Error occurred during deletion of folders in the Portrait folder:", str(e))
             else:
-                print(colored("[IBAR] - NO PORTRAIT FOLDER EXISTS!:", "red"))
+                print("[IBAR] - NO PORTRAIT FOLDER EXISTS!:")
                 os.makedirs(Dim_Portrait.folder_path)
-                print(colored(f"[IBAR] - Created the folder: {Dim_Portrait.folder_path}", "green"))
-                print(colored("[IBAR] - Add the files to the folder.", "green"))
+                print(f"[IBAR] - Created the folder: {Dim_Portrait.folder_path}")
+                print("[IBAR] - Add the files to the folder.")
 
         except Exception as e:
-            print(colored("[IBAR - RESIZING] - An unexpected error occurred:", "red"), colored(str(e), "red"))
+            print("[IBAR - RESIZING] - An unexpected error occurred:", str(e))
 
     except Exception as e:
-        print(colored("[IBAR] - An unexpected error occurred:", "red"), colored(str(e), "red"))
+        print("[IBAR] - An unexpected error occurred:", str(e))
     else:
-        print(colored("[IBAR] - Image processing completed.", "green"))
+        print("[IBAR] - Image processing completed.")
         # Add pauses using os
         os.system("pause")
     
-
-  
-
 
 # Check if the script is being run directly
 if __name__ == "__main__":
