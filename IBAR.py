@@ -116,10 +116,25 @@ def Image_Seperation(source_photo_folder):
             image = Image.open(file_path)
 
             # Determine the orientation of the image based on pixel sizes
-            if image.height > image.width:
-                orientation = "portrait"
-            elif image.height < image.width:
-                orientation = "landscape"
+            # Get the orientation (if available)
+            if "exif" in image.info:
+                exif_data = image._getexif()
+                if exif_data is not None:
+                    image_orientation = exif_data.get(274)
+                    if orientation is not None:
+                        width, height = image.size
+                        if image_orientation == 1:
+                            if width > height:
+                                print("Image orientation: Landscape")
+                                orientation = landscape
+                            else:
+                                print("Image orientation: Portrait")
+                                orientation = portrait
+                        elif image_orientation == 6:
+                            orientation = portrait
+                            print("Image orientation: Portrait")
+                        else:
+                            print("Image orientation: Unknown")
 
             # Create the destination folder for the image orientation if it doesn't exist
             orientation_folder = os.path.join(destination_folder, orientation)
