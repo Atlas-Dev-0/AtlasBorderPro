@@ -1,8 +1,9 @@
 import os
 import sys
 import shutil
-from PIL import Image
+from PIL import Image, ExifTags, ImageOps
 
+# Code Written and Compiled by Kenneth Gonzales
 
 def resource_path(relative_path):
     try:
@@ -56,60 +57,82 @@ def resize_images_in_folder(folder_path, width, height, resolution):
             image_path = os.path.join(folder_path, filename)
             output_path = os.path.join(output_folder, filename)
             try:
-                resize_image(image_path, output_path, width, height, resolution)
+                resize(image_path, output_path, width, height, resolution)
+                print(f"Resizing Image that has {width} x {height} ")
             except FileNotFoundError as e:
                 print(f"Error: File not found {image_path}: {str(e)}")
             except Exception as e:
                 print(f"Error processing image {filename}: {str(e)}")
 
 
-
-def resize_image(image_path, output_path, width, height, resolution):
+def resize(image_path, output_path, width, height, resolution):
     print("[imageResizer] Processing:", image_path)
+
     try:
         image = Image.open(image_path)
     except Image.UnidentifiedImageError as e:
         print(f"Error opening image {image_path}: {str(e)}")
         return
 
-    image_width, image_height = image.size
+    # Check the image path for orientation information
+    if "Landscape" in image_path:
+        orientation = "Landscape"
+    elif "Portrait" in image_path:
+        orientation = "Portrait"
+    else:
+        # Check the EXIF metadata for the orientation tag
+        if hasattr(image, '_getexif') and image._getexif() is not None:
+            exif_data = image._getexif()
+            orientation = exif_data.get(0x0112)
 
-    # Calculate the desired width and height in pixels
+            # Rotate the image based on the orientation tag
+            if orientation == 3:
+                image = image.rotate(180, expand=True)
+            elif orientation == 6:
+                image = image.rotate(-90, expand=True)
+            elif orientation == 8:
+                image = image.rotate(90, expand=True)
+
+    # Force the image to be in the correct orientation (if it's not a landscape image)
+    if not ("Landscape" in image_path):
+        if image.width > image.height:
+            image = image.transpose(Image.ROTATE_90)
+
     desired_width = int(width * resolution)
     desired_height = int(height * resolution)
 
-    # Calculate the aspect ratios
-    image_aspect_ratio = image_width / image_height
-    desired_aspect_ratio = desired_width / desired_height
+    # Determine the aspect ratio of the desired dimensions and the original image
+    desired_ratio = desired_width / desired_height
+    original_ratio = image.width / image.height
 
-    if image_aspect_ratio > desired_aspect_ratio:
-        # The image is wider than desired, crop the sides
-        new_width = int(image_aspect_ratio * desired_height)
-        resized_image = image.resize(
-            (new_width, desired_height), Image.LANCZOS)
-        left = (new_width - desired_width) / 2
-        right = new_width - left
-        cropped_image = resized_image.crop((left, 0, right, desired_height))
-    else:
-        # The image is taller than desired, crop the top and bottom
-        new_height = int(desired_width / image_aspect_ratio)
-        resized_image = image.resize(
-            (desired_width, new_height), Image.LANCZOS)
-        top = (new_height - desired_height) / 2
-        bottom = new_height - top
-        cropped_image = resized_image.crop((0, top, desired_width, bottom))
+    if desired_ratio > original_ratio:
+        # Crop horizontally
+        new_width = int(image.height * desired_ratio)
+        left = (image.width - new_width) // 2
+        right = left + new_width
+        image = image.crop((left, 0, right, image.height))
+    elif desired_ratio < original_ratio:
+        # Crop vertically
+        new_height = int(image.width / desired_ratio)
+        top = (image.height - new_height) // 2
+        bottom = top + new_height
+        image = image.crop((0, top, image.width, bottom))
 
     try:
-        # Save the resized and cropped image with the desired resolution
-        cropped_image.save(output_path, dpi=(resolution, resolution))
+        # Resize the image to the desired dimensions
+        resized_image = image.resize((desired_width, desired_height), resample=Image.LANCZOS)
+
+        resized_image.info['dpi'] = (resolution, resolution)
+        # Save the resized image with the desired resolution
+        resized_image.save(output_path, dpi=(resolution, resolution))
         print("[imageResizer] Saved:", output_path)
     except Exception as e:
         print(f"Error saving image {output_path}: {str(e)}")
 
-
 def Image_Seperation(source_photo_folder):
     source_folder = source_photo_folder
     destination_folder = os.path.join(os.getcwd(), "Photos_Here", "Seperated")
+    image_path = source_photo_folder
 
     # Create the destination folder if it doesn't exist
     os.makedirs(destination_folder, exist_ok=True)
@@ -123,20 +146,30 @@ def Image_Seperation(source_photo_folder):
         file_path = os.path.join(source_folder, file_name)
 
         # Check if the file is a directory or not an image
-        if not os.path.isfile(file_path) or not file_name.lower().endswith(('.jpg', '.jpeg', '.png')):
+        if not os.path.isfile(file_path) or not file_name.lower().endswith(('.jpg', '.jpeg', '.png', '.JPG', '.JPEG')):
             continue
 
         try:
             # Open the image using PIL
             image = Image.open(file_path)
-
-            # Determine the orientation of the image based on pixel sizes
-            orientation = "Unknown"
-            width, height = image.size
-            if width > height:
-                orientation = "Landscape"
-            elif width < height:
-                orientation = "Portrait"
+            orientation_tag = None
+            for tag, value in image._getexif().items():
+                if tag in ExifTags.TAGS and ExifTags.TAGS[tag] == 'Orientation':
+                    orientation_tag = tag
+                    break
+            if orientation_tag is None:
+                print(f"{image_path}: Orientation tag not found in EXIF data.")
+            else:
+                orientation_number = image._getexif().get(orientation_tag)
+                if orientation_number == 8:
+                    print(f"{image_path}: Orientation value = {orientation_number} (Portrait)")
+                    orientation = "Portrait";
+                elif orientation_number == 1:
+                    print(f"{image_path}: Orientation value = {orientation_number} (Landscape)")
+                    orientation = "Landscape";
+                else:
+                    print(f"{image_path}: Orientation value = {orientation_number} (Unknown)")
+            
 
             # Create the destination folder for the image orientation if it doesn't exist
             orientation_folder = os.path.join(destination_folder, orientation)
@@ -268,12 +301,12 @@ def Run_IBAR():
                 print(parameter)
             sys.exit()
 
-        # Image Separation
-        print("[IBAR] - Image Separation beginning")
+        # Image Seperation
+        print("[IBAR] - Image Seperation beginning")
         try:
             Image_Seperation(source_photo_folder)
         except Exception as e:
-            print("[IBAR] - Error occurred during Image Separation:", str(e))
+            print("[IBAR] - Error occurred during Image Seperation:", str(e))
 
         try:
             print("[IBAR - RESIZING] - Resizing Images in process.")
