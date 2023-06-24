@@ -25,10 +25,8 @@ class Portrait:
         self.Border_Complete_Path = Border_Complete_Path
 
 
-Dim_Landscape = Landscape(36, 24, 240, r'Photos_Here\Seperated\landscape',
-                          r'AYFO_BORDER\AYFP-WATERMARK-LANDSCAPE.png', r'Photos_Here\Seperated\landscape\processed', r'Photos_Here\Seperated\Landscape\Border_Done')
-Dim_Portrait = Portrait(24, 36, 240, r'Photos_Here\Seperated\portrait',
-                        r'AYFO_BORDER\AYFP-WATERMARK-PORTRAIT.png', r'Photos_Here\Seperated\portrait\processed', r'Photos_Here\Seperated\portrait\Border_Done')
+Dim_Landscape = Landscape(36, 24, 240, r'Photos_Here\Seperated\Landscape',r'AYFO_BORDER\AYFP-WATERMARK-LANDSCAPE.png', r'Photos_Here\Seperated\Landscape\processed', r'Photos_Here\Seperated\Landscape\Border_Done')
+Dim_Portrait = Portrait(24, 36, 240, r'Photos_Here\Seperated\Portrait',r'AYFO_BORDER\AYFP-WATERMARK-PORTRAIT.png', r'Photos_Here\Seperated\Portrait\processed', r'Photos_Here\Seperated\Portrait\Border_Done')
 
 
 def resize_images_in_folder(folder_path, width, height, resolution):
@@ -43,10 +41,12 @@ def resize_images_in_folder(folder_path, width, height, resolution):
             image_path = os.path.join(folder_path, filename)
             output_path = os.path.join(output_folder, filename)
             try:
-                resize_image(image_path, output_path,
-                             width, height, resolution)
+                resize_image(image_path, output_path, width, height, resolution)
+            except FileNotFoundError as e:
+                print(f"Error: File not found {image_path}: {str(e)}")
             except Exception as e:
                 print(f"Error processing image {filename}: {str(e)}")
+
 
 
 def resize_image(image_path, output_path, width, height, resolution):
@@ -116,25 +116,12 @@ def Image_Seperation(source_photo_folder):
             image = Image.open(file_path)
 
             # Determine the orientation of the image based on pixel sizes
-            # Get the orientation (if available)
-            if "exif" in image.info:
-                exif_data = image._getexif()
-                if exif_data is not None:
-                    image_orientation = exif_data.get(274)
-                    if orientation is not None:
-                        width, height = image.size
-                        if image_orientation == 1:
-                            if width > height:
-                                print("Image orientation: Landscape")
-                                orientation = landscape
-                            else:
-                                print("Image orientation: Portrait")
-                                orientation = portrait
-                        elif image_orientation == 6:
-                            orientation = portrait
-                            print("Image orientation: Portrait")
-                        else:
-                            print("Image orientation: Unknown")
+            orientation = "Unknown"
+            width, height = image.size
+            if width > height:
+                orientation = "Landscape"
+            elif width < height:
+                orientation = "Portrait"
 
             # Create the destination folder for the image orientation if it doesn't exist
             orientation_folder = os.path.join(destination_folder, orientation)
@@ -148,12 +135,10 @@ def Image_Seperation(source_photo_folder):
 
         except FileNotFoundError:
             print(f"File not found: '{file_name}'")
-        except PIL.UnidentifiedImageError:
-            print(f"Unidentified image: '{file_name}'")
         except Exception as e:
             print(f"Error processing '{file_name}': {e}")
 
-    print("Image separation completed.")
+    print("Image Seperation completed.")
 
 
 def delete_images_in_folder(folder_path):
@@ -242,52 +227,113 @@ def delete_all_folders(folder_path):
     else:
         pass
 
-
 def Run_IBAR():
-    # Variables
-    source_photo_folder = os.path.join(os.getcwd(), "Photos_Here")
+    try:
+        # Variables
+        source_photo_folder = os.path.join(os.getcwd(), "Photos_Here")
 
-    # Main code of your program goes here
-    print("AYFO - Image Border Applier and Resizer")
-    print("[IBAR] - Proccess Starting")
-    print("[IBAR] - Image Seperation begining")
-    Image_Seperation(source_photo_folder)
+        # Main code of your program goes here
+        print("AYFO - Image Border Applier and Resizer")
+        print("[IBAR] - Process Starting")
 
-    print("[IBAR] RESIZING IMAGES ON PROCESS.")
+        # Image Seperation
+        print("[IBAR] - Image Seperation beginning")
+        try:
+            Image_Seperation(source_photo_folder)
+        except Exception as e:
+            print("[IBAR] - Error occurred during Image Seperation:", e)
 
-    if os.path.exists(Dim_Landscape.folder_path):
-        # Process Landscape
-        resize_images_in_folder(
-            Dim_Landscape.folder_path, Dim_Landscape.width, Dim_Landscape.height, Dim_Landscape.resolution)
-        delete_images_in_folder(Dim_Landscape.folder_path)
-        copy_processed_images(Dim_Landscape.processed_path,
-                              Dim_Landscape.folder_path)
-        Add_Border_To_Images(Dim_Landscape.folder_path,
-                             Dim_Landscape.AYFO_BORDER)
-        delete_images_in_folder(Dim_Landscape.folder_path)
-        copy_processed_images(Dim_Landscape.Border_Complete_Path,
-                              Dim_Landscape.folder_path)
-        delete_all_folders(Dim_Landscape.folder_path)
+        
+        try:
+            print("[IBAR - RESIZING] - Resizing Images in process.")
+            if os.path.exists(Dim_Landscape.folder_path):
+                # Process Landscape
+                try:
+                    resize_images_in_folder(Dim_Landscape.folder_path, Dim_Landscape.width, Dim_Landscape.height, Dim_Landscape.resolution)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during resizing images in the Landscape folder:", e)
 
+                try:
+                    delete_images_in_folder(Dim_Landscape.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during deletion of images in the Landscape folder:", e)
+
+                try:
+                    copy_processed_images(Dim_Landscape.processed_path, Dim_Landscape.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during copying processed images to the Landscape folder:", e)
+
+                try:
+                    Add_Border_To_Images(Dim_Landscape.folder_path, Dim_Landscape.AYFO_BORDER)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during adding border to images in the Landscape folder:", e)
+
+                try:
+                    delete_images_in_folder(Dim_Landscape.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during deletion of images in the Landscape folder:", e)
+
+                try:
+                    copy_processed_images(Dim_Landscape.Border_Complete_Path, Dim_Landscape.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during copying processed border images to the Landscape folder:", e)
+
+                try:
+                    delete_all_folders(Dim_Landscape.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during deletion of folders in the Landscape folder:", e)
+            else: 
+                print(f"[IBAR] - NO LANDSCAPE FOLDER EXISTS!: {Dim_Landscape.folder_path}")
+                pass
+                
+            if os.path.exists(Dim_Portrait.folder_path):
+                # Process Portrait
+                try:
+                    resize_images_in_folder(Dim_Portrait.folder_path, Dim_Portrait.width, Dim_Portrait.height, Dim_Portrait.resolution)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during resizing images in the Portrait folder:", e)
+
+                try:
+                    delete_images_in_folder(Dim_Portrait.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during deletion of images in the Portrait folder:", e)
+
+                try:
+                    copy_processed_images(Dim_Portrait.processed_path, Dim_Portrait.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during copying processed images to the Portrait folder:", e)
+
+                try:
+                    Add_Border_To_Images(Dim_Portrait.folder_path, Dim_Portrait.AYFO_BORDER)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during adding border to images in the Portrait folder:", e)
+
+                try:
+                    delete_images_in_folder(Dim_Portrait.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during deletion of images in the Portrait folder:", e)
+
+                try:
+                    copy_processed_images(Dim_Portrait.Border_Complete_Path, Dim_Portrait.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during copying processed border images to the Portrait folder:", e)
+
+                try:
+                    delete_all_folders(Dim_Portrait.folder_path)
+                except Exception as e:
+                    print("[IBAR] - Error occurred during deletion of folders in the Portrait folder:", e)
+            else: 
+                print("[IBAR] - NO PORTRAIT FOLDER EXISTS!:")
+                
+        except Exception as e:
+            print("[IBAR - RESIZING] - An unexpected error occurred:", str(e))
+                    
+            
+    except Exception as e:
+        print("[IBAR] - An unexpected error occurred:", str(e))
     else:
-        pass
+        print("[IBAR] - Image processing completed.")
 
-    if os.path.exists(Dim_Portrait.folder_path):
-        # Process Portrait
-        resize_images_in_folder(Dim_Portrait.folder_path, Dim_Portrait.width,
-                                Dim_Portrait.height, Dim_Portrait.resolution)
-        delete_images_in_folder(Dim_Portrait.folder_path)
-        copy_processed_images(Dim_Portrait.processed_path,
-                              Dim_Portrait.folder_path)
-        Add_Border_To_Images(Dim_Portrait.folder_path,
-                             Dim_Portrait.AYFO_BORDER)
-        delete_images_in_folder(Dim_Portrait.folder_path)
-        copy_processed_images(Dim_Portrait.Border_Complete_Path,
-                              Dim_Portrait.folder_path)
-        delete_all_folders(Dim_Portrait.folder_path)
-
-    else:
-        pass
 
 
 # Check if the script is being run directly
