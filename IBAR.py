@@ -378,10 +378,11 @@ def Run_IBAR():
         print(colored("[IBAR] - An unexpected error occurred:", "red"), colored(str(e), "red"))
     else:
         print(colored("[IBAR] - Image processing completed.", "green"))
-
-    # Add pauses using os
-    os.system("pause")
+        # Add pauses using os
+        os.system("pause")
     
+
+  
 
 
 # Check if the script is being run directly
