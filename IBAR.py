@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 from PIL import Image
 from termcolor import colored
@@ -7,6 +8,9 @@ from termcolor import colored
 
 class Landscape:
     def __init__(self, width, height, resolution, folder_path, border_path, processed_path, Border_Complete_Path):
+        if None in (width, height, resolution, folder_path, border_path, processed_path, Border_Complete_Path):
+            raise ValueError("One or more parameters are missing in Landscape.")
+        
         self.width = width
         self.height = height
         self.resolution = resolution
@@ -18,6 +22,9 @@ class Landscape:
 
 class Portrait:
     def __init__(self, width, height, resolution, folder_path, border_path, processed_path, Border_Complete_Path):
+        if None in (width, height, resolution, folder_path, border_path, processed_path, Border_Complete_Path):
+            raise ValueError("One or more parameters are missing in Portrait.")
+        
         self.width = width
         self.height = height
         self.resolution = resolution
@@ -25,7 +32,6 @@ class Portrait:
         self.AYFO_BORDER = border_path
         self.processed_path = processed_path
         self.Border_Complete_Path = Border_Complete_Path
-
 
 Dim_Landscape = Landscape(36, 24, 240, r'Photos_Here\Seperated\Landscape',r'AYFO_BORDER\AYFP-WATERMARK-LANDSCAPE.png', r'Photos_Here\Seperated\Landscape\processed', r'Photos_Here\Seperated\Landscape\Border_Done')
 Dim_Portrait = Portrait(24, 36, 240, r'Photos_Here\Seperated\Portrait',r'AYFO_BORDER\AYFP-WATERMARK-PORTRAIT.png', r'Photos_Here\Seperated\Portrait\processed', r'Photos_Here\Seperated\Portrait\Border_Done')
@@ -230,7 +236,8 @@ def delete_all_folders(folder_path):
         pass
 
 def Run_IBAR():
-    try:
+
+    try:            
         # Variables
         source_photo_folder = os.path.join(os.getcwd(), "Photos_Here")
 
@@ -238,10 +245,26 @@ def Run_IBAR():
         print(colored("AYFO - Image Border Applier and Resizer", "cyan"))
         print(colored("[IBAR] - Process Starting", "cyan"))
 
+        # Check if any parameter is None or empty for Landscape object
+        missing_parameters_landscape = [name for name, value in vars(Dim_Landscape).items() if value is None or value == ""]
+        if missing_parameters_landscape:
+            print("Missing parameters in the Landscape object:")
+            for parameter in missing_parameters_landscape:
+                print(parameter)
+            sys.exit()
+
+        # Check if any parameter is None or empty for Portrait object
+        missing_parameters_portrait = [name for name, value in vars(Dim_Portrait).items() if value is None or value == ""]
+        if missing_parameters_portrait:
+            print("Missing parameters in the Portrait object:")
+            for parameter in missing_parameters_portrait:
+                print(parameter)
+            sys.exit()
+
         # Image Separation
         print(colored("[IBAR] - Image Separation beginning", "yellow"))
         try:
-            Image_Separation(source_photo_folder)
+            Image_Seperation(source_photo_folder)
         except Exception as e:
             print(colored("[IBAR] - Error occurred during Image Separation:", "red"), colored(str(e), "red"))
 
@@ -336,6 +359,7 @@ def Run_IBAR():
                     print(colored("[IBAR] - Error occurred during copying processed border images to the Portrait folder:", "red"),
                           colored(str(e), "red"))
 
+
                 try:
                     delete_all_folders(Dim_Portrait.folder_path)
                 except Exception as e:
@@ -364,3 +388,5 @@ def Run_IBAR():
 if __name__ == "__main__":
     # Call the main function
     Run_IBAR()
+    input("Press enter to close program")
+    
