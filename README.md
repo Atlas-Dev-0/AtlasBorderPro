@@ -10,9 +10,9 @@ AYFO - Image Border Applier and Resizer (IBAR) is a Python script created by Ken
 
 ## Installation
 
-1. Download the IBAR.exe file through Github or https://drive.google.com/file/d/18A0pH-J51NOo8XN-wjXdgJbs1hELEObW/view?usp=sharing
+1. Download the IBAR.exe file through Github or https://drive.google.com/file/d/1tqh6b1g73cXhvBpS9N0fg53Q8-JWt429/view?usp=sharing
 2. Navigate to the Download folder of the .zip
-3. Extract the .zip file
+3. Extract the file
 4. Run IBAR.exe to add "Photos_Here" folder if there is none
 
 ---
