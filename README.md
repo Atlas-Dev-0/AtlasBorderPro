@@ -36,7 +36,7 @@ AYFO - Image Border Applier and Resizer (IBAR) is a Python script created by Ken
 
 ## NOTE
 
-- Dimensions of Images are 24 inches x 26 inches with a DPI of 240
+- Dimensions of Images are 24 inches x 36 inches with a DPI of 240
 - Can't support Wide Shot Photos
 
 ---
