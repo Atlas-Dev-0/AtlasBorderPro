@@ -1,1 +1,1 @@
-pyinstaller --onefile --hidden-import=PIL --hidden-import=termcolor --distpath=output --icon=IBAR.ico --add-data="AYFO_BORDERS/AYFP-WATERMARK-LANDSCAPE.png;AYFO_BORDERS" --add-data="AYFO_BORDERS/AYFP-WATERMARK-PORTRAIT.png;AYFO_BORDERS" IBAR.py
+pyinstaller --onefile --hidden-import=PIL.* --distpath=output --icon=icon.ico AtlasBorderPro.py

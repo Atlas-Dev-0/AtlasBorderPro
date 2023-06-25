@@ -1,44 +1,47 @@
-# AYFO - Image Border Applier and Resizer (IBAR)
+# AtlasBorderPro - Image Border Applier
 
 ---
 
 ## Description
 
-AYFO - Image Border Applier and Resizer (IBAR) is a Python script created by Kenneth Gonzales. This is a project inclined to make adding borders easier for AYFO Creative Teams. It is designed to automatically separate images into landscape and portrait orientations, resize them, add borders, and save the processed images in the respective folders.
+AtlasBorderPro is a Python script created by Kenneth Gonzales for easy border overlays of images to be posted on social media. It simplifies the process of adding professional-looking borders to enhance your images.
+
+## Follow me on Facebook
+
+Connect with me on Facebook to stay updated with my latest projects and announcements:
+
+[<i class="fab fa-facebook"></i> Mr.GonzalesKenneth](https://www.facebook.com/mr.gonzaleskenneth)
 
 ---
 
 ## Installation
 
-1. Download the IBAR.exe file through Github or https://drive.google.com/drive/folders/1rg7P3oSpjMBx1S_S0DAT9qDD0Wr4yl_F?usp=sharing
-2. Navigate to the Download folder of the .zip
+1. Download the .exe file.
+2. Navigate to the Download folder of the .zip.
 3. Extract the file.
-4. Run IBAR.exe to set up "Photos_Here" folder if there is none.
+4. Run AtlasBorderPro.exe to set up the needed folder if it doesn't exist.
 
 ---
 
 ## Usage
 
-1. Place your images in the "Photos_Here" folder.
+1. Place your images inside the Landscape and/or Portrait folder.
 2. Run the .exe file.
-3. The program will automatically separate the images, resize them, add borders, and save the processed images in the respective folders.
+3. The program will automatically add borders to the images and save the processed images.
 
 ---
 
 ## Features
 
-- Automatically separates images into landscape and portrait orientations.
-- Resizes images while maintaining aspect ratio.
-- Adds a stylish border to the images.
+- Applies stylish borders to images for social media posts.
 - Supports popular image formats such as JPEG and PNG.
 
 ---
 
 ## NOTE
 
-- Dimensions of Images are 24 inches x 36 inches with a DPI of 240
-- Can't support Wide Shot Photos
+- Image dimensions: 24 inches x 36 inches with a DPI of 240.
+- Wide shot photos are not supported.
+- ***
 
----
-
-Enjoy using AYFO - IBAR to enhance your images with professional-looking borders! If you have any questions or feedback, please don't hesitate to contact Kenneth Gonzales.
+Enjoy using AtlasBorderPro to effortlessly enhance your images with beautiful borders!
