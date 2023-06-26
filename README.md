@@ -1,6 +1,3 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
-
 # AtlasBorderPro - Image Border Applier
 
 ---
@@ -13,7 +10,7 @@ AtlasBorderPro is a Python script created by Kenneth Gonzales for easy border ov
 
 Connect with me on Facebook to stay updated with my latest projects and announcements:
 
-[<i class="fab fa-facebook"></i> Mr.GonzalesKenneth](https://www.facebook.com/mr.gonzaleskenneth)
+[Mr.GonzalesKenneth](https://www.facebook.com/mr.gonzaleskenneth)
 
 ---
 
