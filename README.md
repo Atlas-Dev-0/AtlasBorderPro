@@ -16,7 +16,7 @@ Connect with me on Facebook to stay updated with my latest projects and announce
 
 ## Installation
 
-1. Download the .exe file in github repository as raw file or https://drive.google.com/file/d/124RXBbqyWhOgDs17T4UWWYDbbq21DTla/view?usp=sharing.
+1. Download the .exe file in github repository as raw file https://github.com/Atlas-Dev-0/AtlasBorderPro/raw/main/AtlasBorderPro.exe or https://drive.google.com/file/d/124RXBbqyWhOgDs17T4UWWYDbbq21DTla/view?usp=sharing.
 2. Navigate to the Download folder.
 3. Put AtlasBorderPro.exe in another folder.
 4. Run AtlasBorderPro.exe to set up the needed folder if it doesn't exist.
