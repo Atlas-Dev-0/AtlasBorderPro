@@ -42,6 +42,5 @@ Connect with me on Facebook to stay updated with my latest projects and announce
 
 - Image dimensions: 24 inches x 36 inches with a DPI of 240.
 - Wide shot photos are not supported.
-- ***
 
 Enjoy using AtlasBorderPro to effortlessly enhance your images with beautiful borders!
