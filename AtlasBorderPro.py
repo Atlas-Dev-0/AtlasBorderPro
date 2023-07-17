@@ -138,7 +138,6 @@ def convert(input_folder, output_folder):
     except IOError:
         print(f"Failed to convert images in {input_folder}.")
 
-
 def resize_image(input_path, output_folder, height, width, dpi):
     # Open the image
     image = Image.open(input_path)
@@ -161,10 +160,13 @@ def resize_image(input_path, output_folder, height, width, dpi):
     except Exception as e:
         print(f"Error saving image {output_path}: {str(e)}")
         
-def Resize_Image_Folder(input_folder, output_folder, height, width, dpi):
+def Resize_Image_Folder(input_folder, output_folder, height, width, dpi): 
+    # Convert the images and resize them
+    convert(output_folder, input_folder)
+     
     # Resize images in the input folder
     image_files = os.listdir(input_folder)
-    
+     
     for file in image_files:
         file_path = os.path.join(input_folder, file)
         resize_image(file_path, output_folder, height, width, dpi)
@@ -241,16 +243,15 @@ def Run_ABP():
         Portrait_Folder_Path = r"Files_Here/Portrait"
         Portrait_Folder_Path_converted = r"Files_Here/Portrait/converted"
 
-        convert(Landscape_Folder_Path, Landscape_Folder_Path_converted)
-        convert(Portrait_Folder_Path, Portrait_Folder_Path_converted)
-
         print("Resizing Landscape")
+        user_dpi = input("Enter DPI: ")
+    
         # Resize Images in Landscape 
-        Resize_Image_Folder(Landscape_Folder_Path_converted, Landscape_Folder_Path, 24, 36, 240)
+        Resize_Image_Folder(Landscape_Folder_Path_converted, Landscape_Folder_Path, 24, 36, user_dpi)
 
         # Resize Images in Portrait 
         print("Resizing Portrait")
-        Resize_Image_Folder(Portrait_Folder_Path_converted, Portrait_Folder_Path, 36, 24, 240)
+        Resize_Image_Folder(Portrait_Folder_Path_converted, Portrait_Folder_Path, 36, 24, user_dpi)
 
         for subfolder in subfolders:
             processed_folder_path = os.path.join(main_folder, subfolder, "converted")
@@ -260,11 +261,11 @@ def Run_ABP():
 
         try: 
             # Add The Borders to Landscape
-            Landscape_Folder_Path_Bordered = os.path.join(Landscape_Folder_Path, "Imags_With_Border")
+            Landscape_Folder_Path_Bordered = os.path.join(Landscape_Folder_Path, "Images_With_Border")
             add_border(Landscape_Folder_Path, L_Border, Landscape_Folder_Path_Bordered)
 
             # Add The Borders to Portrait
-            Portrait_Folder_Path_Bordered = os.path.join(Portrait_Folder_Path, "Imags_With_Border")
+            Portrait_Folder_Path_Bordered = os.path.join(Portrait_Folder_Path, "Images_With_Border")
             add_border(Portrait_Folder_Path, P_Border, Portrait_Folder_Path_Bordered)
 
         except FileNotFoundError:
