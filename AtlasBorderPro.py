@@ -4,6 +4,7 @@ import shutil
 import ctypes
 from PIL import Image, ImageOps
 
+
 def Instructions():
     print("")
     print("Folders are Now Created and are now ready!")
@@ -23,10 +24,12 @@ def Instructions():
     input("Press Enter and Restart the program after you added the images..")
     sys.exit()
 
+
 def add_border(folder_path, png_folder, output_folder):
     try:
         # Get the PNG file from the folder
-        png_files = [file for file in os.listdir(png_folder) if file.endswith(".png")]
+        png_files = [file for file in os.listdir(
+            png_folder) if file.endswith(".png")]
 
         # Check if there is only one PNG file
         if len(png_files) != 1:
@@ -72,14 +75,14 @@ def add_border(folder_path, png_folder, output_folder):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-            
+
 def resize_Borders(base_dir):
     # Loop through all files in the base directory
     for filename in os.listdir(base_dir):
         # Check if the file is a PNG image
         if filename.endswith(".png"):
             file_path = os.path.join(base_dir, filename)
-            
+
             # Determine the image dimensions and DPI based on the folder name
             folder_name = os.path.basename(base_dir)
             if folder_name.lower() == "landscape":
@@ -91,63 +94,71 @@ def resize_Borders(base_dir):
             else:
                 # Skip processing if the folder name doesn't match
                 continue
-            
+
             # Open the image using PIL
             image = Image.open(file_path)
-            
+
             # Resize the image
             resized_image = image.resize((width, height))
-            
+
             # Set the DPI
             resized_image.info['dpi'] = (dpi, dpi)
-            
+
             # Save the resized image with the same filename
             resized_image.save(file_path)
+
 
 def convert(input_folder, output_folder):
     try:
         # Create the output folder if it doesn't exist
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
-        
+
         # Get a list of all files in the input folder
         files = os.listdir(input_folder)
-        
+
         # Loop through each file in the input folder
         for file in files:
             # Check if the file is a JPG image
             if file.lower().endswith(".jpg") or file.lower().endswith(".jpeg"):
                 input_path = os.path.join(input_folder, file)
                 output_path = os.path.join(output_folder, file)
-                
+
+                print("[Log]: Input Path - " + input_path)
+                print("[Log]: Output Path - " + output_path)
                 # Open the image and apply EXIF rotation correction
                 image = Image.open(input_path)
                 image = ImageOps.exif_transpose(image)
-                
+
                 # Convert the image to regular JPG format
                 if image.mode != "RGB":
                     image = image.convert("RGB")
-                
+
                 # Save the converted image
                 image.save(output_path, "JPEG")
-                
+
                 print(f"Image {file} converted successfully! at {output_path}")
-        
+
         print("All images converted successfully!")
-        
+
     except IOError:
         print(f"Failed to convert images in {input_folder}.")
 
+
 def resize_image(input_path, output_folder, height, width, dpi):
+
+    print(f"[LOG]: INPUT = {input_path} | OUTPUT = {output_folder} ")
     # Open the image
     image = Image.open(input_path)
     # Calculate the new size in pixels
     desired_width = int(width * dpi)
     desired_height = int(height * dpi)
+    output_path = None
 
     try:
         # Resize the image to the desired dimensions
-        resized_image = image.resize((desired_width, desired_height), resample=Image.LANCZOS)
+        resized_image = image.resize(
+            (desired_width, desired_height), resample=Image.LANCZOS)
 
         resized_image.info['dpi'] = (dpi, dpi)
 
@@ -159,27 +170,30 @@ def resize_image(input_path, output_folder, height, width, dpi):
         print("[imageResizer] Saved:", output_path)
     except Exception as e:
         print(f"Error saving image {output_path}: {str(e)}")
-        
-def Resize_Image_Folder(input_folder, output_folder, height, width, dpi): 
+
+
+def Resize_Image_Folder(input_folder, output_folder, height, width, dpi):
+
     # Convert the images and resize them
     convert(output_folder, input_folder)
-     
+
     # Resize images in the input folder
     image_files = os.listdir(input_folder)
-     
+
     for file in image_files:
         file_path = os.path.join(input_folder, file)
         resize_image(file_path, output_folder, height, width, dpi)
-        print(f"[imageResizer] Resized {file} and saved at {output_folder}")      
-    
+        print(f"[imageResizer] Resized {file} and saved at {output_folder}")
+    print("[LOG]: Done Resizing")
+
+
 def Run_ABP():
     main_folder = "Files_Here"
     subfolders = ["Borders", "Landscape", "Portrait"]
     Border_path = "Files_Here/Borders"
     border_Subfolders = ["Landscape_Border", "Portrait_Border"]
     print("Checking if Folders needed are present")
-    
-        
+
     L_Border = os.path.join(Border_path, border_Subfolders[0])
     P_Border = os.path.join(Border_path, border_Subfolders[1])
 
@@ -206,7 +220,7 @@ def Run_ABP():
                     print(f"{subfolder_path} Folders Exist")
             Instructions()
 
-        else: 
+        else:
             print(f"Main Folder Exists")
 
         # Check and create subfolders
@@ -227,7 +241,8 @@ def Run_ABP():
                 print(f"{subfolder_path} Folders Exist")
 
         for subfolder in subfolders:
-            processed_folder_path = os.path.join(main_folder, subfolder, "converted")
+            processed_folder_path = os.path.join(
+                main_folder, subfolder, "converted")
             if os.path.exists(processed_folder_path):
                 shutil.rmtree(processed_folder_path)
                 print("Deleted 'converted' folder")
@@ -235,7 +250,7 @@ def Run_ABP():
         # landscape = 36w x 24h
         # portrait = 24w x 36h
         print("Converting Borders")
-        resize_Borders("Files_Here/Borders/Landscape_Border")   
+        resize_Borders("Files_Here/Borders/Landscape_Border")
         resize_Borders("Files_Here/Borders/Portrait_Border")
 
         Landscape_Folder_Path = r"Files_Here/Landscape"
@@ -245,28 +260,35 @@ def Run_ABP():
 
         print("Resizing Landscape")
         user_dpi = input("Enter DPI: ")
-    
-        # Resize Images in Landscape 
-        Resize_Image_Folder(Landscape_Folder_Path_converted, Landscape_Folder_Path, 24, 36, user_dpi)
 
-        # Resize Images in Portrait 
+        # Resize Images in Landscape
+        Resize_Image_Folder(Landscape_Folder_Path_converted,
+                            Landscape_Folder_Path, 24, 36, user_dpi)
+
+        # Resize Images in Portrait
         print("Resizing Portrait")
-        Resize_Image_Folder(Portrait_Folder_Path_converted, Portrait_Folder_Path, 36, 24, user_dpi)
+        Resize_Image_Folder(Portrait_Folder_Path_converted,
+                            Portrait_Folder_Path, 36, 24, user_dpi)
 
         for subfolder in subfolders:
-            processed_folder_path = os.path.join(main_folder, subfolder, "converted")
+            processed_folder_path = os.path.join(
+                main_folder, subfolder, "converted")
             if os.path.exists(processed_folder_path):
                 shutil.rmtree(processed_folder_path)
                 print("Deleted 'converted' folder")
 
-        try: 
+        try:
             # Add The Borders to Landscape
-            Landscape_Folder_Path_Bordered = os.path.join(Landscape_Folder_Path, "Images_With_Border")
-            add_border(Landscape_Folder_Path, L_Border, Landscape_Folder_Path_Bordered)
+            Landscape_Folder_Path_Bordered = os.path.join(
+                Landscape_Folder_Path, "Images_With_Border")
+            add_border(Landscape_Folder_Path, L_Border,
+                       Landscape_Folder_Path_Bordered)
 
             # Add The Borders to Portrait
-            Portrait_Folder_Path_Bordered = os.path.join(Portrait_Folder_Path, "Images_With_Border")
-            add_border(Portrait_Folder_Path, P_Border, Portrait_Folder_Path_Bordered)
+            Portrait_Folder_Path_Bordered = os.path.join(
+                Portrait_Folder_Path, "Images_With_Border")
+            add_border(Portrait_Folder_Path, P_Border,
+                       Portrait_Folder_Path_Bordered)
 
         except FileNotFoundError:
             print("Error: Border file not found.")
@@ -275,11 +297,12 @@ def Run_ABP():
 
     except Exception as e:
         print(f"Error occurred: {str(e)}")
-    
+
+
 # Check if the script is being run directly
 if __name__ == "__main__":
     # Call the main function
-    
+
     print("           _    _             _____                    _              ____")
     print("   / \\   | |_ | |  __ _  ___ | __ )   ___   _ __   __| |  ___  _ __ |  _ \\  _ __   ___")
     print("  / _ \\  | __|| | / _` |/ __||  _ \\  / _ \\ | '__| / _` | / _ \\| '__|| |_) || '__| / _ \\")
