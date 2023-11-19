@@ -6,6 +6,12 @@
 
 AtlasBorderPro is a Python script created by Kenneth Gonzales for easy border overlays of images to be posted on social media. It simplifies the process of adding professional-looking borders to enhance your images.
 
+## Follow me on Facebook
+
+Connect with me on Facebook to stay updated with my latest projects and announcements:
+
+[Mr.GonzalesKenneth](https://www.facebook.com/mr.gonzaleskenneth)
+
 ---
 
 ## Installation
@@ -38,13 +44,3 @@ AtlasBorderPro is a Python script created by Kenneth Gonzales for easy border ov
 - Wide shot photos are not supported.
 
 Enjoy using AtlasBorderPro to effortlessly enhance your images with beautiful borders!
-
----
-
-## Follow me on Facebook
-
-Connect with me on Facebook to stay updated with my latest projects and announcements:
-
-[Mr.GonzalesKenneth](https://www.facebook.com/mr.gonzaleskenneth)
-
-
