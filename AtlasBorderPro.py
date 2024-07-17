@@ -1,7 +1,6 @@
 import os
 import sys
 import shutil
-import ctypes
 from PIL import Image, ImageOps
 
 
@@ -56,7 +55,7 @@ def add_border(folder_path, png_folder, output_folder):
 
                 # Open the image
                 image = Image.open(image_path).convert("RGBA")
-
+                
                 # Resize the PNG image to match the dimensions of the loaded image
                 png_resized = png_image.resize(image.size)
 
@@ -124,8 +123,9 @@ def convert(input_folder, output_folder):
                 input_path = os.path.join(input_folder, file)
                 output_path = os.path.join(output_folder, file)
 
-                print("[Log]: Input Path - " + input_path)
-                print("[Log]: Output Path - " + output_path)
+                print("[image Converter]: Converting.. >> " + input_path)
+                print("[image Converter]: Converted.. >> " + output_path)
+                
                 # Open the image and apply EXIF rotation correction
                 image = Image.open(input_path)
                 image = ImageOps.exif_transpose(image)
@@ -148,13 +148,21 @@ def convert(input_folder, output_folder):
 def resize_image(input_path, output_folder, height, width, dpi):
 
     print(f"[LOG]: INPUT = {input_path} | OUTPUT = {output_folder} ")
+
     # Open the image
     image = Image.open(input_path)
-    # Calculate the new size in pixels
+        
+    # NOTE: Fixed Type Coercion Error - Added data type to dpi so that it wont cause size to be repition based from the dpi
+    # example:
+    # width = 5
+    # dpi - 2
+    # width * dpi = 55
+
+    dpi = int(dpi)
     desired_width = int(width * dpi)
     desired_height = int(height * dpi)
-    output_path = None
 
+    print(f"image size: w: {desired_width} l: {desired_height} dpi: {dpi}")
     try:
         # Resize the image to the desired dimensions
         resized_image = image.resize(
@@ -165,18 +173,17 @@ def resize_image(input_path, output_folder, height, width, dpi):
         # Save the resized image with the desired resolution inside the output folder
         filename = os.path.basename(input_path)
         output_path = os.path.join(output_folder, filename)
-        resized_image.save(output_path, dpi=(dpi, dpi))
-
+        resized_image.save(output_path)
         print("[imageResizer] Saved:", output_path)
     except Exception as e:
-        print(f"Error saving image {output_path}: {str(e)}")
+        print(f"Error saving image: {str(e)}")
 
 
 def Resize_Image_Folder(input_folder, output_folder, height, width, dpi):
 
     # Convert the images and resize them
     convert(output_folder, input_folder)
-
+        
     # Resize images in the input folder
     image_files = os.listdir(input_folder)
 
@@ -260,7 +267,7 @@ def Run_ABP():
 
         print("Resizing Landscape")
         user_dpi = input("Enter DPI: ")
-
+        user_dpi = int(user_dpi)
         # Resize Images in Landscape
         Resize_Image_Folder(Landscape_Folder_Path_converted,
                             Landscape_Folder_Path, 24, 36, user_dpi)
